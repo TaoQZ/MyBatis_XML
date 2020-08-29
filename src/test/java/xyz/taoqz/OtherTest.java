@@ -2,14 +2,10 @@ package xyz.taoqz;
 
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
-import tk.mybatis.mapper.entity.Example;
 import xyz.taoqz.dao.GradeMapper;
-import xyz.taoqz.dao.SchoolMapper;
 import xyz.taoqz.domain.Grade;
-import xyz.taoqz.domain.School;
 import xyz.taoqz.domain.Student;
 import xyz.taoqz.utils.MyBatisCacheUtil;
-import xyz.taoqz.utils.MyBatisUtil;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -80,12 +76,5 @@ public class OtherTest {
     }
 
 
-    @Test
-    public void demo2(){
-        String str = "123";
-        str = "456";
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("123").append("456");
-    }
 
 }
