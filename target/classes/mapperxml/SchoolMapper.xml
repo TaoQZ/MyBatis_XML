@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xyz.taoqz.dao.SchoolMapper">
+  <resultMap id="BaseResultMap" type="xyz.taoqz.domain.School">
+    <!--@mbg.generated generated on Sun Aug 16 00:24:09 CST 2020.-->
+    <id column="cid" jdbcType="INTEGER" property="cid" />
+    <result column="cname" jdbcType="VARCHAR" property="cname" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated generated on Sun Aug 16 00:24:09 CST 2020.-->
+    cid, cname
+  </sql>
+
+  <cache-ref namespace="xyz.taoqz.dao.GradeMapper"/>
+
+  <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
+
+  <update id="update">
+        update mybatis_xml.school set cname = #{cname} where cid = #{cid} ;
+  </update>
+  <select id="findAll" resultMap="BaseResultMap">
+    select * from mybatis_xml.school;
+  </select>
+</mapper>

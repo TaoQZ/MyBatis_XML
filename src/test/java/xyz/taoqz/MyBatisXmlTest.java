@@ -88,8 +88,9 @@ public class MyBatisXmlTest {
     public void findByCondotion(){
         HashMap<String, String> conMap = new HashMap<>();
         conMap.put("sname","王五");
-        List<Student> students = sqlSession.selectList("studentSpace.findByCondotion", conMap);
-        System.out.println(students);
+//        List<Student> students = sqlSession.selectList("studentSpace.findByCondotion", conMap);
+        List<Student> students = sqlSession.selectList("xyz.taoqz.domain.Student.findByCondotion", conMap);
+        System.out.println(students.get(0).getGrade());
         sqlSession.commit();
     }
 
@@ -121,12 +122,12 @@ public class MyBatisXmlTest {
     public void findAllMapper(){
         TeacherMapper mapper = MyBatisUtil.getMapper(TeacherMapper.class);
         List<Teacher> teachers = mapper.findAll();
-//        for (Teacher teacher : teachers) {
-////            System.out.println(teacher.getStudents());
-//            System.out.println(teacher);
-//        }
-//        System.out.println(teachers.get(0).getStudents());
-        List<Teacher> teachers2 = mapper.findAll();
+        for (Teacher teacher : teachers) {
+//            System.out.println(teacher.getStudents());
+            System.out.println(teacher);
+        }
+        System.out.println(teachers.get(0).getTname()+"======="+teachers.get(0).getStudents());
+//        System.out.println(teachers.get(0).getClass());
 
     }
 

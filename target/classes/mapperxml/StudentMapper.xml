@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--    namespac 命名空间必须唯一 最好写为类的全路径类名(接口绑定) 这里为了配合标签的id使用 -->
+<!--    如果和接口类Mapper 使用改为全路径类名-->
+<!--<mapper namespace="studentSpace">-->
+<mapper namespace="xyz.taoqz.domain.Student">
+    <!-- resultMap标签:映射实体与表
+        type属性：表示实体全路径名
+        id属性：为实体与表的映射取⼀个任意的唯⼀的名字
+    -->
+
+    <resultMap type="xyz.taoqz.domain.Student" id="studentSingleMap" >
+        <id property="sid" column="sid"/>
+        <result property="sname" column="sname"/>
+        <result property="sex" column="sex"/>
+    </resultMap>
+
+    <resultMap type="xyz.taoqz.domain.Student" id="studentMap">
+        <!-- id标签:映射主键属性
+        result标签：映射⾮主键属性
+        property属性:实体的属性名
+        column属性：表的字段名
+        -->
+        <id property="sid" column="sid"/>
+        <result property="sname" column="sname"/>
+        <result property="sex" column="sex"/>
+        <result property="gid" column="gid"/>
+
+<!--        可以配置映射关系,也可以拿其他配置文件的 resultMap 引用其id即可-->
+<!--        association: 一对一-->
+        <association property="grade" javaType="grade" >
+            <id property="gid" column="gid"/>
+            <result property="gname" column="gname"/>
+        </association>
+<!--    一对多,或多对多-->
+<!--        ofType: 它用来将 JavaBean（或字段）属性的类型和集合存储的类型区分开来-->
+        <collection property="teachers" ofType="xyz.taoqz.domain.Teacher">
+            <id property="tid" column="tid"/>
+            <result property="tname" column="tname"/>
+        </collection>
+    </resultMap>
+
+
+
+    <!--SQL⽚段默认是不帮我们⾃动⽣成合适的SQL，因此需要我们⾃⼰⼿动除去逗号-->
+    <sql id="key">
+        <trim suffixOverrides=",">
+            <if test="sid!=null">
+                sid,
+            </if>
+            <if test="sname!=null">
+                sname,
+            </if>
+            <if test="sex!=null">
+                sex,
+            </if>
+            <if test="gid!=null">
+                gid,
+            </if>
+            <if test="remark!=null">
+                remark,
+            </if>
+        </trim>
+    </sql>
+
+    <sql id="value">
+        <trim suffixOverrides=",">
+            <if test="sid!=null">
+                #{sid},
+            </if>
+            <if test="sname!=null">
+                #{sname},
+            </if>
+            <if test="sex!=null">
+                #{sex},
+            </if>
+            <if test="gid!=null">
+                #{gid},
+            </if>
+        </trim>
+    </sql>
+
+    <!--    在JDBC中我们通常使⽤?号作为占位符，⽽在Mybatis中，我们是使⽤#{}作为占位符-->
+    <!--    parameterType我们指定了传⼊参数的类型-->
+    <!--    #{}实际上就是调⽤了Student属性的get⽅法-->
+    <!--    动态插入-->
+    <insert id="insertCondition" parameterType="xyz.taoqz.domain.Student">
+        <selectKey keyProperty="remark" order="BEFORE" resultType="string">
+            select now()
+        </selectKey>
+        insert into Student (<include refid="key"/>) values (<include refid="value"/>,#{remark});
+    </insert>
+
+    <insert id="insertStudent" parameterType="xyz.taoqz.domain.Student" >
+        <!--  可以获取新插入数据的id值  -->
+        <selectKey keyProperty="sid" order="AFTER" resultType="int">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into student(sid,sname,sex,remark) VALUES(#{sid},#{sname},#{sex},#{remark});
+    </insert>
+
+<!--    resultMap这个属性代表是返回值类型，返回值如果是该类型的集合同样写该类型即可 -->
+    <select id="findByPage" parameterType="map" resultMap="studentMap">
+        select sid,sname,sex,gid from mybatis_xml.student limit #{pageNum},#{pageSize};
+    </select>
+
+    <select id="findByCondotion" parameterType="map"  resultMap="studentMap">
+        select sid,sname,sex,gid from mybatis_xml.student
+<!--        将where作为标签 ,解决了没有条件时的sql拼写错误-->
+        <where>
+            <if test="sid!=null">
+                and sid = #{sid}
+            </if>
+            <if test="sname!=null">
+                and sname = #{sname}
+            </if>
+            <if test="sex!=null">
+                and sex = #{sex}
+            </if>
+        </where>
+    </select>
+
+<!--    resultMap: 对外部 resultMap 的命名引用。结果映射是 MyBatis 最强大的特性，如果你对其理解透彻，许多复杂的映射问题都能迎刃而解。-->
+    <select id="findByIds" resultMap="studentMap">
+
+<!--    resultType: 期望从这条语句中返回结果的类全限定名或别名。
+                    注意，如果返回的是集合，那应该设置为集合包含的类型，而不是集合本身的类型。
+
+                    resultType 和 resultMap 之间只能同时使用一个。-->
+<!--    <select id="findByIds"  resultType="xyz.taoqz.domain.Student" >-->
+        select s.sid,s.sname,s.sex,g.gid,g.gname from mybatis_xml.student s join mybatis_xml.grade g
+        on s.gid = g.gid
+        WHERE s.sid in
+        <foreach item="item" index="index" collection="list"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="findAll" resultMap="studentMap">
+        select s.*,g.*,t.tid,t.tname from mybatis_xml.student s
+                                              left join mybatis_xml.grade g on s.gid = g.gid left join mybatis_xml.tea_stu ts
+                                                                                                       on s.sid = ts.sid left join teacher t on ts.tid = t.tid
+    </select>
+
+    <update id="updateCondition" parameterType="xyz.taoqz.domain.Student">
+        update mybatis_xml.student
+        <set>
+            <if test="sname!=null">
+                sname = #{sname},
+            </if>
+            <if test="sex!=null">
+                sex = #{sex},
+            </if>
+        </set>
+        where sid = #{sid};
+    </update>
+
+    <select id="findByTid" parameterType="int" resultMap="studentSingleMap">
+        select * from student s inner join tea_stu ts on s.sid = ts.sid and ts.tid = #{tid};
+    </select>
+</mapper>
