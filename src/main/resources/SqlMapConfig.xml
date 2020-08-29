@@ -29,7 +29,7 @@
 <!--        lazyLoadTriggerMethods-->
 <!--        指定对象的哪些方法触发一次延迟加载。	用逗号分隔的方法列表。-->
 <!--        随意指定一个方法 覆盖默认方法测试-->
-        <setting name="lazyLoadTriggerMethods" value="getClass"/>
+        <setting name="lazyLoadTriggerMethods" value="getCustom"/>
 <!--        默认 这四个属性很特殊,都可能会用到所有属性,所以作为默认方法-->
 <!--        <setting name="lazyLoadTriggerMethods" value="equals,clone,hashCode,toString"/>-->
 

@@ -121,13 +121,12 @@ public class MyBatisXmlTest {
     public void findAllMapper(){
         TeacherMapper mapper = MyBatisUtil.getMapper(TeacherMapper.class);
         List<Teacher> teachers = mapper.findAll();
-//        for (Teacher teacher : teachers) {
-////            System.out.println(teacher.getStudents());
-//            System.out.println(teacher);
-//        }
+        for (Teacher teacher : teachers) {
+            System.out.println(teacher);
+        }
 //        System.out.println(teachers.get(0).getStudents());
+        System.out.println(teachers.get(0).getStudents());
         List<Teacher> teachers2 = mapper.findAll();
-
     }
 
     @Test

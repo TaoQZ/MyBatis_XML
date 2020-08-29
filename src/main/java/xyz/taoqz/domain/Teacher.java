@@ -29,6 +29,10 @@ public class Teacher {
         this.students = students;
     }
 
+    public String getCustom(){
+        return  "custom";
+    }
+
     @Override
     public String toString() {
         return "Teacher{" +
